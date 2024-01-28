@@ -1,0 +1,102 @@
+\documentclass{article}
+\usepackage{graphicx} 
+\usepackage{geometry}
+\geometry{left=1in, right=1in, top=1in, bottom=1in}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{minted}
+\title{CS 6140 Draft}
+\author{qgao67 Gao}
+\date{January 17th 2024}
+
+\begin{document}
+
+\maketitle
+
+\section{Class One: Interpretation of Greedy Algo in Scheduling Problem}
+\begin{minted}{python}
+# First create a list of tasks
+def interval_scheduling(tasks):
+
+    # Suppose there are 2 tuples inside each element within the list
+    for task in tasks:
+        start, finish = task
+
+    # Use the sort method and lambda function to sort the tasks by their end times
+    tasks.sort(key=lambda x: x[1])
+\end{minted}
+At this stage, we have created a task set of the form $(s_n,f_n)$, representing respectively the start and finish times of a specific task. We sort the list by its finish time using the lambda function.\par
+\begin{itemize}
+    \item Def a variable with one parameter 'tasks'
+    \item Use a tuple package to give 'task' 2 tuples
+    \item Sort the task by the second tuple $x:x[1]$ using sort method and lambda function. Notice that the key is always necessary for the sorting method, and lambda is the unnamed function in Python to perform simple functions. In this case, the lambda function helps select the second ($x[1]$) entry in the 2-dimensional tuple.
+\end{itemize}
+\begin{minted}{Python}
+    # Initialize the selected tasks list, an empty list
+    selected_tasks = []
+
+    # Initialize the last finish time to -1, the number before 0 to make sure
+    # we can update the last finish time by the first task
+    last_finish_time = -1
+
+    # Iterate through each task
+        # Select the task if the task's start time is greater or equal to the last finish time.
+        # Append the task into the list of selected_tasks, then update the last finish time
+        # always by 'finish'
+        if start >= last_finish_time:
+            selected_tasks.append(task)
+            last_finish_time = finish
+
+    return selected_tasks
+
+# Define a list of tasks and test the function
+tasks = [(0, 6), (1, 4), (3, 5), (5, 7), (5, 9), (6, 10)]
+print(interval_scheduling(tasks))
+\end{minted}
+
+Time complexity is a crucial concept in algorithm analysis, used to describe how the execution time of an algorithm increases with the size of the input. Time complexity is typically expressed using Big O notation, which provides an upper bound on the time required for an algorithm in the worst-case scenario.
+
+Some common time complexities to remember are:
+
+\begin{itemize}
+    \item \textbf{Constant Time Complexity} - \(O(1)\): The execution time of the algorithm is constant and does not depend on the input size. 
+    \textit{Example:} Accessing a specific element in an array.
+
+    \item \textbf{Linear Time Complexity} - \(O(n)\): The execution time grows linearly with the input size. 
+    \textit{Example:} Finding the maximum element in an unsorted array.
+
+    \item \textbf{Quadratic Time Complexity} - \(O(n^2)\): The execution time grows quadratically with the input size. This is common in algorithms that involve nested loops over the data.
+    \textit{Example:} Bubble sort or insertion sort.
+
+    \item \textbf{Logarithmic Time Complexity} - \(O(\log n)\): The execution time grows logarithmically with the input size. 
+    \textit{Example:} Binary search in a sorted array.
+
+    \item \textbf{Linearithmic Time Complexity} - \(O(n \log n)\): Combines linear and logarithmic growth. This complexity often arises in algorithms that divide the problem in half at each step. 
+    \textit{Example:} Merge sort or quicksort.
+\end{itemize}
+\subsection{Greedy Algorithm in Interval Scheduling}
+
+In the interval scheduling problem, we can observe the application of a greedy algorithm. The key characteristics of the greedy approach are as follows:
+
+\begin{itemize}
+    \item **Greedy Choice**: At each step, the algorithm makes a greedy choice by selecting the task that can finish earliest in time.
+    
+    \item **Optimal Substructure**: The problem exhibits optimal substructure, meaning that choosing a task at any step leads to a subproblem that can be solved optimally.
+    
+    \item **Irreversible Selection**: Once a task is selected, it becomes part of the solution and cannot be revoked.
+\end{itemize}
+
+The core logic of the greedy algorithm can be summarized as follows:
+
+\begin{verbatim}
+for each task:
+    if task is compatible with the selected tasks:
+        select the task
+\end{verbatim}
+
+The algorithm iterates through the tasks, selecting each task if it is compatible with the already selected tasks. Compatibility is determined by ensuring that the task's start time is greater than or equal to the finish time of the last selected task. This ensures that the selected tasks do not overlap in time.
+
+The algorithm's goal is to maximize the number of selected tasks while ensuring they do not overlap. This represents the essence of a greedy approach in interval scheduling.
+\section{Class Two:}
+\end{document}
