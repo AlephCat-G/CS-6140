@@ -1,0 +1,131 @@
+\documentclass{article}
+\usepackage{graphicx} 
+\usepackage{geometry}
+\geometry{left=1in, right=1in, top=1in, bottom=1in}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{minted}
+\title{CS 6140 HW1}
+\author{Qidian Gao}
+\date{January 26th 2024}
+
+\begin{document}
+
+\maketitle
+\section{Question 1}
+\subsection{a) \textbf{Answer: }}\begin{enumerate}
+    \item[(a)] For $f(n) = (n+10)^4$ and $g(n) = n^4 - 3n^3$, observe that both functions are dominated by $n^4$ term for large $n$. Therefore, $f \in \Theta(g)$.
+    \item[(b)] For $f(n) = \log_{1000} n$ and $g(n) = \log_2 n$, since the growth rate of logarithmic functions is independent of their base, $f \in \Theta(g)$.
+    \item[(c)] For $f(n) = n^n$ and $g(n) = 1000n!$, the function $f(n)$ grows exponentially, while $g(n)$ grows factorially. Exponential growth is faster than factorial growth, so $f \in \Omega(g)$ but not $O(g)$.
+    \item[(d)] For $f(n) = 9^n$ and $g(n) = n!$, the function $f(n)$, being an exponential function, grows faster than the factorial function $g(n)$, hence $f \in \Omega(g)$ but not $O(g)$.
+    \item[(e)] For $f(n) = n^{1000}$ and $g(n) = n^2$, $f(n)$ grows much faster than $g(n)$ since the degree of the polynomial $f(n)$ is much higher. Therefore, $f \in \Omega(g)$ but not $O(g)$.
+\end{enumerate}
+\subsection{b) \textbf{Answer:} }Proof by following:\\
+Let $f(n)=O(h(n))$ and $g(n)=O(h(n))$,\\
+Since $f(n)=O(h(n))$, then b <= $\mathrm{f}(\mathrm{n})<=\mathrm{c1}$ * $\mathrm{h}(n)$ where $\mathrm{c} 1$ is a positive constant, which is the 1st premise.\\
+Since $g(n)=O(h(n))$, this implies that J <= $g(n)<=c 2 * h(n)$ where $c 2$ is a positive constant, which is the 2nd premise.\\
+Adding 1 and 2 premise, we get:\\
+$0<=f(n)+g(n)<=(c 1+c 2) * h(n)$ where $c 1+c 2$ is a positive constant.\\
+Hence, $f(n)+g(n)=O(h(n))$.
+\section{Question 2}
+Given a new computer that is \(k\) times faster, we calculate the new maximum problem sizes for algorithms \(A_1\), \(A_3\), \(A_4\), and \(A_5\).
+
+\subsection*{Algorithm \(A_1\) (Running time: \( \log n \))}
+For the current computer, the maximum problem size \(S_1\) can be solved in one hour:
+\[ \log S_1 = 1 \, \text{hour} \]
+For the new computer:
+\[ \log S_1' = k \cdot 1 \, \text{hour} \]
+\[ S_1' = 2^{k} \]
+
+\subsection*{Algorithm \(A_3\) (Running time: \( n^2 \))}
+For the current computer:
+\[ S_3^2 = 1 \, \text{hour} \]
+\[ S_3 = \sqrt{1 \, \text{hour}} \]
+For the new computer:
+\[ S_3'^2 = k \cdot 1 \, \text{hour} \]
+\[ S_3' = \sqrt{k \cdot 1 \, \text{hour}} \]
+\[ S_3' = \sqrt{k} \cdot S_3 \]
+
+\subsection*{Algorithm \(A_4\) (Running time: \( n^3 \))}
+For the current computer:
+\[ S_4^3 = 1 \, \text{hour} \]
+\[ S_4 = \sqrt[3]{1 \, \text{hour}} \]
+For the new computer:
+\[ S_4'^3 = k \cdot 1 \, \text{hour} \]
+\[ S_4' = \sqrt[3]{k \cdot 1 \, \text{hour}} \]
+\[ S_4' = \sqrt[3]{k} \cdot S_4 \]
+
+\subsection*{Algorithm \(A_5\) (Running time: \( 2^n \))}
+For the current computer:
+\[ 2^{S_5} = 1 \, \text{hour} \]
+For the new computer:
+\[ 2^{S_5'} = k \cdot 1 \, \text{hour} \]
+\[ S_5' = S_5 + \log_2{k} \]
+\section{Question 3}
+\textbf{Answer:} No, the algorithm does not always yield an optimal solution.
+
+\subsection*{Proof}
+
+To demonstrate that the algorithm does not always provide an optimal solution, we can use a counterexample. Consider a set of jobs with their respective start and finish times:
+
+\begin{itemize}
+    \item Job \(J_1\): Start at 1, Finish at 4
+    \item Job \(J_2\): Start at 2, Finish at 5
+    \item Job \(J_3\): Start at 3, Finish at 6
+    \item Job \(J_4\): Start at 4, Finish at 7
+\end{itemize}
+
+According to the algorithm:
+
+\begin{enumerate}
+    \item Jobs are sorted by ascending order of start time, resulting in \(J_1, J_2, J_3, J_4\) (with start times 1, 2, 3, 4 respectively).
+    \item Starting with \(J_4\) and moving backwards:
+    \begin{itemize}
+        \item \(J_4\) is added to set \(A\) since \(A\) is initially empty.
+        \item \(J_3\) is not added to \(A\) because it overlaps with \(J_4\).
+        \item \(J_2\) is not added to \(A\) for the same overlapping reason.
+        \item \(J_1\) is not added to \(A\) for the same overlapping reason.
+    \end{itemize}
+\end{enumerate}
+
+As a result, the algorithm selects only \(J_4\). However, an optimal solution would be to select either \(J_1\) and \(J_3\) or \(J_2\) and \(J_4\), with each pair not overlapping and maximizing the number of jobs scheduled. 
+
+\section{Question 4}
+\begin{enumerate}
+    \item Calculate the ratio \( \frac{v_i}{w_i} \) for each item \( i \). This ratio is often referred to as the "value-to-weight ratio" or "density".
+    \item Sort the items by this ratio in non-increasing order.
+    \item Initialize the total value \( V \) as 0 and the total weight \( W \) as 0.
+    \item For each item \( i \) in the sorted list:
+    \begin{itemize}
+        \item If adding the whole item \( i \) doesn't exceed the weight limit \( S \), i.e., \( W + w_i \leq S \):
+        \begin{itemize}
+            \item Add the whole item \( i \) to the knapsack.
+            \item Update \( V \) by adding the full value of item \( i \), \( V = V + v_i \).
+            \item Update \( W \) by adding the full weight of item \( i \), \( W = W + w_i \).
+        \end{itemize}
+        \item Otherwise, if adding the whole item \( i \) exceeds the weight limit \( S \), take the fractional part \( f \) of item \( i \) such that \( W + f \cdot w_i = S \).
+        \begin{itemize}
+            \item Add the fraction \( f \) of item \( i \) to the knapsack.
+            \item Update \( V \) by adding \( f \cdot v_i \) to it.
+            \item Update \( W \) to be exactly \( S \), as the knapsack is now full.
+            \item Break the loop as the knapsack cannot accommodate more items.
+        \end{itemize}
+    \end{itemize}
+    \item Return the total value \( V \) as the maximum value that can be carried within the weight limit \( S \).
+\end{enumerate}
+
+\subsection{Proof}
+
+\begin{enumerate}
+    \item Let item \( x \) be the first item that differs in the optimal solution \( O \) and the greedy solution \( G \). Assume without loss of generality that \( x \) is part of \( O \) but not \( G \), or \( x \) is only a fraction in \( G \) but taken fully in \( O \).
+    \item Since the greedy algorithm chooses items based on the highest value-to-weight ratio, and it chose another item or fraction of an item over \( x \), it means the item chosen by the greedy algorithm has a value-to-weight ratio greater than or equal to \( x \).
+    \item We can replace item \( x \) in \( O \) with the item or fraction chosen by \( G \). This exchange does not decrease the total value of \( O \), but makes \( O \) more similar to \( G \).
+    \item By repeating this exchange, we can transform \( O \) into \( G \) without losing value, thus proving \( G \) is at least as good as \( O \).
+    \item Since \( O \) is assumed to be the optimal solution, and \( G \) is at least as good as \( O \), it follows that \( G \) is also an optimal solution.
+\end{enumerate}
+
+Therefore, the greedy algorithm yields an optimal solution to the fractional knapsack problem.
+
+\end{document}
+\end{document}

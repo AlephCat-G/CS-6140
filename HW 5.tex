@@ -1,0 +1,107 @@
+\documentclass{article}
+\usepackage{graphicx} 
+\usepackage{geometry}
+\geometry{left=1in, right=1in, top=1in, bottom=1in}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage{float}
+\usepackage{algpseudocode}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{minted}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+\title{CS 6140 HW5}
+\author{Qidian Gao}
+\date{Apr 8th 2024}
+
+\begin{document}
+
+\maketitle
+\section{Question 1}
+
+\textbf{Step 1: Showing that the Efficient Recruiting Problem is in NP.}
+
+The Efficient Recruiting Problem is in NP because a non-deterministic algorithm can guess a set of at most $k$ counselors and then verify in polynomial time whether this set covers all the sports. Specifically, the verification step involves checking if each sport has at least one counselor qualified in that sport.\\
+\textbf{Step 2: Reduce the Vertex Cover problem to the Efficient Recruiting Problem.}
+
+The Vertex Cover problem is defined as follows: Given an undirected graph $G=(V, E)$ and a positive integer $k$, determine if there exists a subset of vertices $V^{\prime} \subseteq V$ with $\left|V^{\prime}\right| \leq k$ such that every edge in $E$ has at least one endpoint in $V^{\prime}$.
+
+We will show a polynomial-time reduction from the Vertex Cover problem to the Efficient Recruiting Problem.
+Given an instance of the Vertex Cover problem, $(G=(V, E), k)$, we construct an instance of the Efficient Recruiting Problem as follows:
+\begin{itemize}
+    \item The set of sports is the set of edges $E$ in the graph $G$.
+    \item The set of potential counselors is the set of vertices $V$ in the graph $G$.
+    \item For each edge $e=(u, v)$ in $E$, the set of counselors qualified in that sport is the set $\{u, v\}$.
+    \item The target number of counselors to hire is $k$.
+\end{itemize}
+
+We claim that there exists a vertex cover of size at most $k$ in the graph $G$ if and only if there exists a set of at most $k$ counselors that can cover all the sports in the Efficient Recruiting Problem.
+
+\textbf{Proof of the claim:}
+
+$(\Rightarrow)$ Suppose there exists a vertex cover $V^{\prime}$ of size at most $k$ in the graph $G$. Then, the set of counselors corresponding to the vertices in $V^{\prime}$ can cover all the sports, as each edge in $E$ has at least one endpoint in $V^{\prime}$.
+
+$(\Leftarrow)$ Suppose there exists a set of at most $k$ counselors that can cover all the sports in the Efficient Recruiting Problem. Then, the set of vertices corresponding to these counselors forms a vertex cover of size at most $k$ in the graph $G$, as each edge in $E$ is covered by at least one of the selected counselors.
+
+Since the reduction can be performed in polynomial time, and the Vertex Cover problem is NP-complete, we have shown that the Efficient Recruiting Problem is also NP-complete.
+
+Therefore, the Efficient Recruiting Problem is NP-complete.
+
+
+\section{Question 2}
+
+\subsection{a}
+In the SubsetSum problem, the \texttt{Expand()} function generates two child nodes for each node in the decision tree, corresponding to the decisions of including or excluding a particular number from the set $A$. Specifically, if we are considering number $a_i$ at some step, then one child node represents the decision to include $a_i$ in our subset $S$, and the other represents the decision to exclude $a_i$ from $S$. Thus, each node in the decision tree has exactly two children, leading to a binary tree structure.
+
+
+\subsection{b}
+The worst-case running time of the backtracking algorithm for SubsetSum is determined by the size of the decision tree, which, in this case, is a binary tree. Since each node represents a decision to include or exclude a number, and there are $n$ numbers, the height of this tree is $n$. Therefore, in the worst-case scenario, the algorithm explores all $2^n$ possible subsets, leading to a running time of $O(2^n)$.
+
+
+\subsection{c}
+The \texttt{Check()} function in the SubsetSum backtracking algorithm can result in three possible outcomes:
+1. \textbf{Success}, if the sum of the numbers in the current subset $S$ equals the target sum $U$.
+2. \textbf{Failure}, if the sum of the numbers in $S$ exceeds $U$, indicating that $S$ cannot be a solution.
+3. \textbf{Continue}, if the sum of the numbers in $S$ is less than $U$ and there are still numbers left to consider for inclusion in $S$.
+
+
+\subsection{d}
+Pruning occurs in the \texttt{Check()} function under two conditions:
+\begin{enumerate}
+    \item When the sum of the current subset and the smallest remaining element in $A$ exceeds $U$, indicating no further additions can yield a solution.
+    \item When the sum of all elements in the current subset plus the remaining elements in $A$ is less than $U$, indicating a solution is not possible with the current subset.
+\end{enumerate}
+\section{Question 3}
+\subsection{A}
+\subsubsection{a}
+Let $a=\left(a_1, a_2, \ldots a_n\right)$ be a vector of $\mathrm{n}$ indicator variables such that $a_i=1$ if $S_i \in S^{\prime}$ and $a_i=0$ if $S_i \notin S^{\prime}$. In addition, to indicate a pending decision for a given set $S_i, a_i=-1$. The algorithm starts with $a_i=-1 \forall i=1,2, \ldots, n$. So, a partial solution to the problem will be the vector a which indicates the status of each of the sets $S_i$.
+\subsubsection{b}
+The subproblem will include a reduced universe set $\mathcal{U}_r$ and a reduced set of subsets $S_r$. Let $S_c=\left\{S_i: S_i \in S \& a_i=1\right\}$ and $\mathcal{U}_c=\bigcup_{S_i \in S_c} S_i$. The reduced universe becomes $\mathcal{U}_r=\mathcal{U} \backslash \mathcal{U}_c$ and the reduced set of subsets is $S_r=\left\{S_i: S_i \in S \& a_i=-1\right\}$.
+\subsubsection{c}
+We choose the subproblem to expand on the basis of the size of the reduced universe $\mathcal{U}_r$. The problem with the least size of $\mathcal{U}_r$ is chosen.
+\subsubsection{d}
+We expand a subproblem by choosing a set $S_i$ with $a_i=-1$ and assigning either $a_i=1$ or $a_i=0$ based on whether or not this set should be included in the set cover $S^{\prime}$.
+\subsubsection{e}
+An appropriate lower bound would be one more than the size of the set $S_c$ at each step $\left(\left|S_c\right|+1\right)$. This size is essentially the number of subsets of $\mathcal{U}$ that have been chosen to be a part of the set cover $S^{\prime}$. We add one because we have not yet covered the entire universe set $\mathcal{U}$ and we will need atleast one more subset to do so.
+\subsection{B}
+\subsubsection{a}
+An intuitive scoring function is the number of elements of $\mathcal{U}$ that are covered by the sets found in the candidate solution. If one candidate solution covers a higher number of elements than another, it is considered better. Another equivalent scoring function can be the number of elements of $\mathcal{U}$ that are not covered by the sets found in the candidate solution. In this case, if one candidate solution misses lesser number of elements from $\mathcal{U}$ than another, then it is considered better.
+\subsubsection{b}
+The neighborhood for a candidate solution will consist of those solutions that add a new subset (not in the exisiting solution already) to the existing solution and those that remove a subset (already in the exisiting solution) from the candidate solution. Therefore, there are $O(n)$ potential neighbors for a candidate solution.
+\section{Question 4}
+\subsection{a}
+The total size of all objects is $S = \sum_{i=1}^{n} s_i$, where $s_i$ is the size of the $i$-th object. Since each bin can hold objects with a total size of up to 1, the minimum number of bins required to hold all objects cannot be less than the total size of the objects. Therefore, at least $\lceil S \rceil$ bins are needed, as we cannot fit more than 1 unit of size into a single bin.
+
+\subsection{b}
+Under the first-fit heuristic, objects are placed in the first bin in which they fit. Assume for contradiction that two bins are less than half full. If that were true, then the last object placed in the second bin could have been placed in the first bin, contradicting the assumption that the first-fit heuristic was used. Therefore, at most one bin can be less than half full.
+
+\subsection{c}
+Let $B$ be the number of bins used by the first-fit heuristic. Since at most one bin can be less than half full, the total size of objects in $B-1$ bins is at least $(B-1)/2$. Including the possibly less than half full bin, we have $S \geq (B-1)/2$. Rearranging gives $B \leq 2S + 1$, and since $B$ must be an integer, $B \leq \lceil 2S \rceil$. Thus, the first-fit heuristic uses no more than $\lceil 2S \rceil$ bins.
+
+\subsection{d}
+Let $OPT$ be the optimal number of bins required for a given instance of the Bin Packing problem. From part (a), we know that $OPT \geq S$. From part (c), we have shown that the first-fit heuristic uses no more than $\lceil 2S \rceil$ bins. Therefore, the approximation ratio of the first-fit heuristic, defined as the ratio of the heuristic solution to the optimal solution, is at most 2, i.e., $\frac{\text{First-fit}}{OPT} \leq 2$.
+
+\end{document}

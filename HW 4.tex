@@ -1,0 +1,220 @@
+\documentclass{article}
+\usepackage{graphicx} 
+\usepackage{geometry}
+\geometry{left=1in, right=1in, top=1in, bottom=1in}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage{float}
+\usepackage{algpseudocode}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{minted}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+\title{CS 6140 HW4}
+\author{Qidian Gao}
+\date{March 31th 2024}
+
+\begin{document}
+
+\maketitle
+
+\section{Question 1}
+Given $n$ houses in a row, each with a limited number of candies, determine the maximum number of candies that can be collected under the constraint that if candies are collected from a house, the neighboring houses within a radius of two cannot be visited. Let $T(i)$ represent the number of candies at house $i$.
+
+Define $dp[i]$ as the maximum number of candies that can be collected by visiting houses up to and including house $i$, following the given constraints.
+
+The recurrence relation for $dp[i]$ is as follows:
+\begin{equation}
+dp[i] = 
+\begin{cases} 
+T[0] & \text{if } i = 0 \\
+\max(T[0], T[1]) & \text{if } i = 1 \\
+\max(dp[i-1], T[i] + dp[i-3]) & \text{if } i \geq 2
+\end{cases}
+\end{equation}
+
+The base cases are:
+\begin{itemize}
+\item $dp[0] = T[0]$
+\item $dp[1] = \max(T[0], T[1])$
+\end{itemize}
+
+The bottom-up approach to fill the $dp$ table is as follows:
+
+\begin{lstlisting}[language=Python]
+def maxCandies(T):
+    n = len(T)
+    if n == 0:
+        return 0
+    dp = [0] * n
+    dp[0] = T[0]
+    if n > 1:
+        dp[1] = max(T[0], T[1])
+    for i in range(2, n):
+        dp[i] = max(dp[i-1], T[i] + (dp[i-3] if i >= 3 else 0))
+    return dp[n-1]
+\end{lstlisting}
+
+The time complexity of this algorithm is $O(n)$, as it iterates through the list of houses once to fill the $dp$ array.
+
+The space complexity is also $O(n)$, due to the storage requirements of the $dp$ array.
+\section{Question 2}
+\textbf{Problem Statement}
+
+Given a sorted set of points $P = (P_1, P_2, \ldots, P_n)$ on a line and a constant $k$, we need to select a subset of $k-1$ points $(P_{j_1}, P_{j_2}, \ldots, P_{j_{k-1}})$ from $P$, such that the segment from $P_1$ to $P_n$ is partitioned into $k$ pieces with lengths as close to equal as possible. Specifically, we want to minimize the square error:
+
+$$
+\sum_{i=1}^{k-2} (P_{j_{i+1}} - P_{j_i} - L)^2 + (P_n - P_{j_{k-1}} - L)^2
+$$
+
+where $L = (P_n - P_1) / k$ is the desired length of each segment.
+
+\textbf{Dynamic Programming Approach}
+
+To solve this problem efficiently, we can use dynamic programming. The key idea is to break down the problem into smaller subproblems and solve them in a bottom-up manner, reusing previously computed solutions.
+
+\textbf{a) Subproblem and Recurrence Relation}
+
+Let's define the subproblem $dp(i, j, k)$ as the minimum square error when partitioning the segment from $P_1$ to $P_j$ into $k$ pieces using points up to $P_i$.
+
+The base case for this subproblem is when $k = 1$, which means we have only one segment from $P_1$ to $P_j$. In this case, the square error is 0, as there is no partitioning involved. Therefore, $dp(i, j, 1) = 0$ for all valid $i$ and $j$.
+
+To compute $dp(i, j, k)$ for $k > 1$, we need to consider all possible positions for the $(k-1)$th point, $P_{j_{k-1}}$. We choose the position that minimizes the square error for the last segment ($P_{j_{k-1}}$ to $P_j$) and the remaining error from the previous subproblem $dp(i, j_{k-1}, k-1)$.
+
+The recurrence relation can be expressed as:
+
+$$
+dp(i, j, k) = \min_{i \leq j_{k-1} < j} {(P_j - P_{j_{k-1}} - L)^2 + dp(i, j_{k-1}, k-1)}
+$$
+
+where $L = (P_j - P_1) / k$ is the desired length of each segment.
+
+\textbf{b) Bottom-up Pseudocode}
+
+Based on the recurrence relation, we can fill a 3D $dp$ table in a bottom-up manner to compute the minimum square error for all subproblems.
+
+\begin{verbatim}
+function minimizeSquareError(P, n, k):
+L = (P[n] - P[1]) / k  # Desired length of each segment
+
+Initialize dp table
+dp = [[[float('inf')] * (n + 1) for _ in range(n + 1)] for _ in range(k + 1)]
+
+Base case
+for i in range(1, n + 1):
+for j in range(i, n + 1):
+dp[1][i][j] = 0
+
+Fill the dp table bottom-up
+for kk in range(2, k + 1):
+for i in range(1, n):
+for j in range(i + 1, n + 1):
+for jk_minus_1 in range(i, j):
+error = (P[j] - P[jk_minus_1] - L) ** 2 + dp[kk - 1][i][jk_minus_1]
+dp[kk][i][j] = min(dp[kk][i][j], error)
+
+Return the minimum square error
+return dp[k][1][n]
+\end{verbatim}
+
+Let's break down the pseudocode:
+\begin{enumerate}
+\item First, we compute the desired length $L$ of each segment as $(P[n] - P[1]) / k$.
+\item We initialize a 3D $dp$ table with dimensions $(k + 1) \times (n + 1) \times (n + 1)$, where $dp[i][j][k]$ represents the minimum square error when partitioning the segment from $P_1$ to $P_j$ into $k$ pieces using points up to $P_i$.
+\item We handle the base case by setting $dp[1][i][j] = 0$ for all valid $i$ and $j$, as there is no partitioning involved when $k = 1$.
+\item We then fill the $dp$ table in a bottom-up manner, iterating over $k$ from 2 to $k$, $i$ from 1 to $n-1$, and $j$ from $i+1$ to $n$.
+\item For each combination of $i$, $j$, and $k$, we consider all possible positions for the $(k-1)$th point, $P_{j_{k-1}}$, between $P_i$ and $P_j$ (exclusive).
+\item For each position of $P_{j_{k-1}}$, we compute the square error for the last segment ($P_{j_{k-1}}$ to $P_j$) and add it to the minimum square error from the previous subproblem $dp(i, j_{k-1}, k-1)$.
+\item We update $dp[k][i][j]$ with the minimum error among all possible positions of $P_{j_{k-1}}$.
+\item Finally, we return $dp[k][1][n]$, which represents the minimum square error for partitioning the entire segment from $P_1$ to $P_n$ into $k$ pieces.
+\end{enumerate}
+
+\textbf{c) Time and Space Complexity}
+
+\textbf{Time Complexity:}
+The time complexity of the bottom-up dynamic programming solution is $O(kn^3)$. Here's the breakdown:
+\begin{itemize}
+\item The outer loop for $k$ runs $k$ times.
+\item The second loop for $i$ runs $n$ times.
+\item The third loop for $j$ runs $n$ times.
+\item The innermost loop for $j_{k-1}$ runs at most $n$ times.
+\end{itemize}
+Therefore, the total time complexity is $O(k \times n \times n \times n) = O(kn^3)$.
+
+\textbf{Space Complexity:}
+The space complexity of the solution is $O(kn^2)$. We need to store the 3D $dp$ table with dimensions $(k + 1) \times (n + 1) \times (n + 1)$, which requires $O(kn^2)$ space.
+
+\textbf{Optimization}
+It's worth noting that the time complexity can be improved to $O(kn^2)$ by observing that, for a given $i$ and $k$, the minimum error for $dp(i, j, k)$ is non-decreasing as $j$ increases. This allows us to use a pruning technique and avoid unnecessary computations.
+
+The optimized solution involves maintaining an additional array to keep track of the minimum error for each $i$ and $k$, and updating it as we iterate over $j$. This way, we can skip the computations for $j$ values where the minimum error is guaranteed to be greater than the current minimum error. However, for the sake of simplicity, the pseudocode demonstrates the straightforward $O(kn^3)$ solution.
+
+\section{Question 3}
+\textbf{Step 1:} Show that the Independent-set-even problem is in NP.
+
+Let $I$ be a given solution, which is a subset of nodes claimed to be an independent set of size at least $l$. We can verify this claim in polynomial time:
+\begin{enumerate}
+\item Check if $|I| \geq l$. This takes $O(|I|)$ time.
+\item For each pair of nodes $u,v \in I$, check if edge $(u,v)$ exists in the graph. This takes $O(|I|^2)$ time.
+\end{enumerate}
+If both conditions are satisfied, $I$ is indeed a valid solution. The total verification time is polynomial in the size of the graph.
+
+\textbf{Step 2:} We reduce the Independent-set problem to the Independent-set-even problem.
+
+Given an instance $(G=(V,E), k)$ of Independent-set, construct an instance $(G'=(V',E'), l)$ of Independent-set-even as follows:
+\begin{align*}
+V' &= V \cup {v' \mid v \in V \text{ and } \deg(v) \text{ is odd}} \
+E' &= E \cup {(v,v') \mid v' \in V' - V} \
+l &= k
+\end{align*}
+In other words, for each odd-degree node $v$ in $G$, we add a new node $v'$ and an edge $(v,v')$. This ensures that all nodes in $G'$ have even degree. The reduction takes $O(|V|+|E|)$ time, which is polynomial.
+
+Now we prove that $(G,k)$ has a solution if and only if $(G',l)$ has a solution.
+
+($\Rightarrow$) Suppose $I \subseteq V$ is an independent set in $G$ with $|I| \geq k$. Then $I$ is also an independent set in $G'$, because $E \subseteq E'$, so no edges were added between nodes in $I$. Since $|I| \geq k = l$, $I$ is a valid solution for $(G',l)$.
+
+($\Leftarrow$) Suppose $I' \subseteq V'$ is an independent set in $G'$ with $|I'| \geq l$. Let $I = I' \cap V$, i.e., the subset of $I'$ containing only original nodes from $G$. For any $v \in I$, the new node $v'$ (if it exists) cannot be in $I'$, because $(v,v') \in E'$. Therefore, $I$ is an independent set in $G$. Moreover, $|I| \geq |I'| - |V'-V| \geq l - (|V'|-|V|) = k$. So $I$ is a valid solution for $(G,k)$.
+
+We have shown that Independent-set $\leq_p$ Independent-set-even. Since Independent-set-even is in NP and Independent-set is NP-hard, we conclude that Independent-set-even is NP-complete.
+
+\section{Question 4}
+
+We will prove that DOUBLE-SAT is NP-complete by showing that:
+\begin{enumerate}
+\item DOUBLE-SAT is in NP
+\item SAT $\leq_p$ DOUBLE-SAT
+\end{enumerate}
+
+\textbf{Step 1:} Show that DOUBLE-SAT is in NP.
+
+Given a boolean formula $\psi(x_1,\ldots,x_n)$ and two assignments $\vec{a}_1, \vec{a}_2 \in {0,1}^n$, we can verify in polynomial time that both $\vec{a}_1$ and $\vec{a}_2$ satisfy $\psi$. This is done by evaluating $\psi$ on each assignment, which takes $O(|\psi|)$ time. Since the verification can be done in polynomial time, DOUBLE-SAT is in NP.
+
+\textbf{Step 2:} We reduce SAT to DOUBLE-SAT in polynomial time.
+
+Given a SAT instance with boolean formula $\phi(x_1,\ldots,x_n)$ in conjunctive normal form, we construct a DOUBLE-SAT instance with formula $\psi(x_1,\ldots,x_n,y)$:
+$$\psi = (\phi \wedge y) \vee (\phi \wedge \neg y)$$
+
+Here $y$ is a new variable not appearing in $\phi$. The reduction takes $O(|\phi|)$ time, which is polynomial in the size of $\phi$.
+
+Now we prove that $\phi$ is satisfiable if and only if $\psi$ has at least two satisfying assignments.
+
+($\Rightarrow$) Suppose $\phi$ has a satisfying assignment $\vec{a} = (a_1,\ldots,a_n)$. Then $\psi$ has at least two satisfying assignments:
+\begin{align*}
+(\vec{a}, 1) &= (a_1,\ldots,a_n, 1) \
+(\vec{a}, 0) &= (a_1,\ldots,a_n, 0)
+\end{align*}
+This is because when $y=1$, the first clause $(\phi \wedge y)$ is satisfied by $\vec{a}$, and when $y=0$, the second clause $(\phi \wedge \neg y)$ is satisfied by $\vec{a}$.
+
+($\Leftarrow$) Suppose $\psi$ has at least two satisfying assignments $(\vec{a}_1, b_1)$ and $(\vec{a}_2, b_2)$, where $\vec{a}_1, \vec{a}_2 \in {0,1}^n$ and $b_1, b_2 \in {0,1}$. We claim that at least one of $\vec{a}_1$ and $\vec{a}_2$ must satisfy $\phi$.
+
+If $b_1 \neq b_2$, then one of $(\phi \wedge y)$ and $(\phi \wedge \neg y)$ must be satisfied by both assignments. This implies $\phi$ is satisfied by both $\vec{a}_1$ and $\vec{a}_2$.
+
+If $b_1 = b_2$, then $(\phi \wedge y)$ and $(\phi \wedge \neg y)$ cannot be simultaneously satisfied. Without loss of generality, assume $b_1 = b_2 = 1$. Then $(\phi \wedge y)$ must be satisfied by both assignments, which means both $\vec{a}_1$ and $\vec{a}_2$ satisfy $\phi$.
+
+In either case, we have found a satisfying assignment for $\phi$.
+
+We have shown that SAT $\leq_p$ DOUBLE-SAT. Combined with the fact that DOUBLE-SAT is in NP, we conclude that DOUBLE-SAT is NP-complete.
+\end{document}

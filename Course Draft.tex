@@ -80,11 +80,11 @@ Some common time complexities to remember are:
 In the interval scheduling problem, we can observe the application of a greedy algorithm. The key characteristics of the greedy approach are as follows:
 
 \begin{itemize}
-    \item **Greedy Choice**: At each step, the algorithm makes a greedy choice by selecting the task that can finish earliest in time.
+    \item \textbf{Greedy Choice}: At each step, the algorithm makes a greedy choice by selecting the task that can finish earliest in time.
     
-    \item **Optimal Substructure**: The problem exhibits optimal substructure, meaning that choosing a task at any step leads to a subproblem that can be solved optimally.
+    \item \textbf{Optimal Substructure}: The problem exhibits optimal substructure, meaning that choosing a task at any step leads to a subproblem that can be solved optimally.
     
-    \item **Irreversible Selection**: Once a task is selected, it becomes part of the solution and cannot be revoked.
+    \item **Irreversible Selection: Once a task is selected, it becomes part of the solution and cannot be revoked.
 \end{itemize}
 
 The core logic of the greedy algorithm can be summarized as follows:
@@ -98,5 +98,12 @@ for each task:
 The algorithm iterates through the tasks, selecting each task if it is compatible with the already selected tasks. Compatibility is determined by ensuring that the task's start time is greater than or equal to the finish time of the last selected task. This ensures that the selected tasks do not overlap in time.
 
 The algorithm's goal is to maximize the number of selected tasks while ensuring they do not overlap. This represents the essence of a greedy approach in interval scheduling.
-\section{Class Two:}
+\section{Class Two: Graph is a matrix}
+\begin{itemize}
+    \item Graph is a matrix with total complexity $\theta(n^2)$ and single dot complexity $\theta(1)$.
+    \item Graph is a sparse matrix which can be expressed as a adjacency list proportional to m+n and a single entry (u,v) takes $O(deg(u))$ time. \textbf{Deg means outgoing degree.} Identifying all edges takes $\theta(m+n)$ (space complexity). If the matrix is sparse, \textbf{identifying all the edges will be much faster than the graph matrix.}
+    \item Dijkstra's Algorithm is a greedy algorithm. We separate nodes from explored(already found the shortest path) and unexplored. The distance d(u) is 0 for unexplored node. 
+    \item We store the shortest distance from \textbf{source s} to explored node v $d[v]$ together with the predict path $pred(v) = argmin = pred[A,B]$. We update them immediately after adding new nodes.
+    \item The proof of Dijkestra algorithm is 'greedy stays ahead'. We can prove that by induction.
+\end{itemize}
 \end{document}
